@@ -30,15 +30,24 @@ public class EventController {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+//    @GetMapping
+//    public ResponseEntity<List<Event>> getAllEvents(){
+//        List<Event> allEvents = eventService.getAllEvents();
+//        if (allEvents != null) {
+//            return new ResponseEntity<>(allEvents, HttpStatus.OK);
+//        } else {
+//            //todo: add more data to the error
+//            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+//        }
+//    }
+
     @GetMapping
-    public ResponseEntity<List<Event>> getAllEvents(){
-        List<Event> allEvents = eventService.getAllEvents();
-        if (allEvents != null) {
-            return new ResponseEntity<>(allEvents, HttpStatus.OK);
-        } else {
-            //todo: add more data to the error
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+    public ResponseEntity<List<Event>> getAllEventsOrdered(
+            @RequestParam(defaultValue = "startTime") String sort,
+            @RequestParam(defaultValue = "asc") String order) {
+        //todo:: add try catch
+        List<Event> events = eventService.getAllEventsOrdered(sort, order);
+        return ResponseEntity.ok(events);
     }
 
     @GetMapping("{id}")

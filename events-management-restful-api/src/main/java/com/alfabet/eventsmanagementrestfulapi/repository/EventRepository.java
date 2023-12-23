@@ -5,4 +5,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface EventRepository extends JpaRepository<Event, Long> {
     // Custom query methods can be added here if needed
+//    public List<Event> findAllByOrderByParticipantsAsc();
 }

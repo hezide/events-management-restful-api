@@ -14,6 +14,8 @@ public class Event {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    //todo:: auto generate this and not include in DTO
+    private LocalDateTime creationTime;
     private String title;
     private String description;
     private LocalDateTime startTime;

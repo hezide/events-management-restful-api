@@ -3,8 +3,10 @@ package com.alfabet.eventsmanagementrestfulapi.service;
 import com.alfabet.eventsmanagementrestfulapi.model.Event;
 import com.alfabet.eventsmanagementrestfulapi.repository.EventRepository;
 import jakarta.transaction.Transactional;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -17,10 +19,6 @@ public class EventService {
     //@Autowired
     public EventService(EventRepository eventRepository) {
         this.eventRepository = eventRepository;
-    }
-
-    public List<Event> getAllEvents() {
-        return eventRepository.findAll();
     }
 
     public Optional<Event> getEventById(Long id) {
@@ -82,5 +80,25 @@ public class EventService {
 
     public void deleteEvent(Long id) {
         eventRepository.deleteById(id);
+    }
+
+    public List<Event> getAllEventsOrdered(String sort, String order) {
+        Sort.Direction direction = Sort.Direction.fromString(order);
+        Sort sortObj = Sort.by(direction, sort);
+
+        if (!isValidSortProperty(sort)) {
+            return eventRepository.findAll();
+        }
+
+        if(sort.equals("popularity")){
+            sortObj = Sort.by(direction, "participants");
+        }
+
+        return eventRepository.findAll(sortObj);
+    }
+
+    private Boolean isValidSortProperty(String sort) {
+        List<String> sortingOptions = Arrays.asList("participants","popularity", "createdAt");
+        return sortingOptions.contains(sort.toLowerCase());
     }
 }
