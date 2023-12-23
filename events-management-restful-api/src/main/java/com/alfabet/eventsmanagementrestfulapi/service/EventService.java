@@ -98,7 +98,7 @@ public class EventService {
     }
 
     private Boolean isValidSortProperty(String sort) {
-        List<String> sortingOptions = Arrays.asList("participants","popularity", "createdAt");
+        List<String> sortingOptions = Arrays.asList("participants","popularity", "createdat");
         return sortingOptions.contains(sort.toLowerCase());
     }
 }
