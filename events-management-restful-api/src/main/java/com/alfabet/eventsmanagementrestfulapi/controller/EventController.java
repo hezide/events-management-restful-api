@@ -48,6 +48,7 @@ public class EventController {
             @RequestParam(required = false) String title,
             @RequestParam(required = false) LocalDateTime startTime,
             @RequestParam(required = false) LocalDateTime endTime,
+            @RequestParam(required = false) LocalDateTime createdAt,
             @RequestParam(required = false) String location,
             @RequestParam(required = false) String venue,
             @RequestParam(required = false, defaultValue = "createdAt") String sort,
@@ -55,7 +56,7 @@ public class EventController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
         //todo:: add try catch
-        List<Event> events = eventService.getEvents(title, startTime, endTime, location, venue, sort, order, PageRequest.of(page, size));
+        List<Event> events = eventService.getEvents(title, startTime, endTime, location, venue,createdAt, sort, order, PageRequest.of(page, size));
         return ResponseEntity.ok(events);
     }
 

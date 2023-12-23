@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 public class EventSpecifications {
     public static Specification<Event> filterEvents(
             String title, LocalDateTime startTime, LocalDateTime endTime,
-            String location, String venue) {
+            String location, String venue, LocalDateTime createdAt) {
         return (root, query, criteriaBuilder) -> {
             Predicate predicate = criteriaBuilder.conjunction();
 
@@ -21,6 +21,11 @@ public class EventSpecifications {
             if (startTime != null) {
                 predicate = criteriaBuilder.and(predicate, criteriaBuilder.greaterThanOrEqualTo(root.get("startTime"), startTime));
             }
+
+            if (createdAt != null) {
+                predicate = criteriaBuilder.and(predicate, criteriaBuilder.greaterThanOrEqualTo(root.get("createdAt"), createdAt));
+            }
+
             //todo:: think if i want to include
             if (endTime != null) {
                 predicate = criteriaBuilder.and(predicate, criteriaBuilder.lessThanOrEqualTo(root.get("endTime"), endTime));

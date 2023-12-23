@@ -101,9 +101,9 @@ public class EventService {
     }
 
     public List<Event> getEvents(String title, LocalDateTime startTime, LocalDateTime endTime,
-                                 String location, String venue, String sort, String order, Pageable pageable) {
+                                 String location, String venue,LocalDateTime createdAt, String sort, String order, Pageable pageable) {
         //Filtering
-        Specification<Event> spec = EventSpecifications.filterEvents(title, startTime, endTime, location, venue);
+        Specification<Event> spec = EventSpecifications.filterEvents(title, startTime, endTime, location, venue, createdAt);
         //Sorting todo:: extract to a method
         Sort.Direction direction = Sort.Direction.fromString(order);
         Sort sortObj = Sort.by(direction, sort);
