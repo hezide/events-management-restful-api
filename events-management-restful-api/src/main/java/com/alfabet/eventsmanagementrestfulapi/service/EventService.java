@@ -2,10 +2,15 @@ package com.alfabet.eventsmanagementrestfulapi.service;
 
 import com.alfabet.eventsmanagementrestfulapi.model.Event;
 import com.alfabet.eventsmanagementrestfulapi.repository.EventRepository;
+import com.alfabet.eventsmanagementrestfulapi.specification.EventSpecifications;
 import jakarta.transaction.Transactional;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -82,7 +87,11 @@ public class EventService {
         eventRepository.deleteById(id);
     }
 
-    public List<Event> getAllEventsOrdered(String sort, String order) {
+    public List<Event> getEvents(String title, LocalDateTime startTime, LocalDateTime endTime,
+                                 String location, String venue, String sort, String order, Pageable pageable) {
+        //Filtering
+        Specification<Event> spec = EventSpecifications.filterEvents(title, startTime, endTime, location, venue);
+        //Sorting todo:: extract to a method
         Sort.Direction direction = Sort.Direction.fromString(order);
         Sort sortObj = Sort.by(direction, sort);
 
@@ -94,7 +103,9 @@ public class EventService {
             sortObj = Sort.by(direction, "participants");
         }
 
-        return eventRepository.findAll(sortObj);
+        pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sortObj);
+
+        return eventRepository.findAll(spec, pageable).getContent();
     }
 
     private Boolean isValidSortProperty(String sort) {

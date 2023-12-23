@@ -3,10 +3,12 @@ package com.alfabet.eventsmanagementrestfulapi.controller;
 import com.alfabet.eventsmanagementrestfulapi.model.Event;
 import com.alfabet.eventsmanagementrestfulapi.service.EventService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -42,11 +44,18 @@ public class EventController {
 //    }
 
     @GetMapping
-    public ResponseEntity<List<Event>> getAllEventsOrdered(
-            @RequestParam(defaultValue = "startTime") String sort,
-            @RequestParam(defaultValue = "asc") String order) {
+    public ResponseEntity<List<Event>> getAllEvents(
+            @RequestParam(required = false) String title,
+            @RequestParam(required = false) LocalDateTime startTime,
+            @RequestParam(required = false) LocalDateTime endTime,
+            @RequestParam(required = false) String location,
+            @RequestParam(required = false) String venue,
+            @RequestParam(required = false, defaultValue = "createdAt") String sort,
+            @RequestParam(defaultValue = "asc") String order,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
         //todo:: add try catch
-        List<Event> events = eventService.getAllEventsOrdered(sort, order);
+        List<Event> events = eventService.getEvents(title, startTime, endTime, location, venue, sort, order, PageRequest.of(page, size));
         return ResponseEntity.ok(events);
     }
 
