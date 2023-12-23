@@ -54,19 +54,21 @@ public class EventController {
         }
     }
 
-    @PatchMapping("/events/{id}")
+    @PutMapping("{id}")
     public ResponseEntity<?> updateEvent(@PathVariable Long id, @RequestBody Event updatedEventDetails) {
         try {
-            Event existingEvent = eventService.getEventById(id)
-                    .orElseThrow(() -> new NoSuchElementException("Event not found with ID: " + id));
-
-            // Update the existingEvent with details from updatedEventDetails
-            // Example:
-            existingEvent.setTitle(updatedEventDetails.getTitle());
-            existingEvent.setLocation(updatedEventDetails.getLocation());
-            existingEvent.setStartTime(updatedEventDetails.getStartTime());
-
-            Event updatedEvent = eventService.updateEvent(id, existingEvent);
+            Event updatedEvent = eventService.updateEvent(id, updatedEventDetails);
+            return ResponseEntity.ok(updatedEvent);
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.notFound().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+    @PatchMapping("{id}")
+    public ResponseEntity<?> updateEventPartially(@PathVariable Long id, @RequestBody Event updatedEventDetails) {
+        try {
+            Event updatedEvent = eventService.updateEventPartially(id, updatedEventDetails);
             return ResponseEntity.ok(updatedEvent);
         } catch (NoSuchElementException e) {
             return ResponseEntity.notFound().build();
@@ -75,4 +77,17 @@ public class EventController {
         }
     }
 
+    @DeleteMapping("{id}")
+    public ResponseEntity<?> deleteEvent(@PathVariable Long id){
+        try {
+            //todo:: check if already exist
+            eventService.deleteEvent(id);
+            return ResponseEntity.status( HttpStatus.OK).build();
+        } catch (NoSuchElementException e) {
+            //todo:: this doesn't get called, find another way to say that there was no such element
+            return ResponseEntity.notFound().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
 }
