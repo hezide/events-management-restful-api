@@ -1,7 +1,31 @@
 
 # Events Management Restful API
 
-This repository contains a RESTful API for event management built using Spring Boot and PostgreSQL. Follow the steps below to set up and run the application using Docker Compose.
+This repository contains a RESTful API for event management built using Spring Boot and PostgreSQL.
+## Known issues and non-completed tasks:
+- Notification 30 minutes before the event is not implemented yet
+- Integration Testing
+- Provide a DTO to replace the direct connection between the Event and Participants model and the API controller
+- Logging
+- Automatic documentation from the code
+- Bonus Features
+  
+## Architecture
+![Untitled Diagram drawio](https://github.com/hezide/events-management-restful-api/assets/22726977/f4fad7dd-2120-46ce-bf36-7bf699e9cc98)
+
+The architecture of the project aligns with a layered structure:
+
+### 1. Presentation Layer:
+**Controllers:** Responsible for handling incoming HTTP requests, processing inputs, and returning responses. They delegate business logic to the service layer and manage request/response handling.
+
+### 2. Service Layer:
+**Services:** Contain business logic, implement use cases, and coordinate interactions between different parts of the application. They abstract and encapsulate complex business rules.
+
+### 3. Data Access Layer:
+**Repositories:** Manage data access, database interactions, and perform CRUD operations. They abstract away the database-specific logic and provide an interface to interact with the underlying database.
+
+### 4. Model:
+**Entities:** Represent data structures used within the application. Entities map to database tables, while DTOs serve as data transfer objects for communication between layers.
 
 ## Prerequisites
 Make sure you have Docker and Docker Compose installed on your system.
