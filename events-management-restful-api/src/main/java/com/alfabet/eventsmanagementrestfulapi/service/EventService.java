@@ -106,19 +106,24 @@ public class EventService {
         Specification<Event> spec = EventSpecifications.filterEvents(title, startTime, endTime, location, venue, createdAt);
         //Sorting todo:: extract to a method
         Sort.Direction direction = Sort.Direction.fromString(order);
-        Sort sortObj = Sort.by(direction, sort);
+        Sort sortObj = null;
 
-        if (!isValidSortProperty(sort)) {
-            return eventRepository.findAll();
+        if (isValidSortProperty(sort)) {
+            sortObj = Sort.by(direction, sort);
         }
 
+        //todo:: this is not a good approach, fix if time allows
         if (sort.equals("popularity")) {
-            sortObj = Sort.by(direction, "participants.size()");
+            pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize());
+            if(order.equalsIgnoreCase("ASC"))
+                return eventRepository.findAllSortedByParticipantsAsc(spec, pageable).getContent();
+            return eventRepository.findAllSortedByParticipantsDesc(spec, pageable).getContent();
+        }
+        else{
+            pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sortObj);
+            return eventRepository.findAll(spec, pageable).getContent();
         }
 
-        pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sortObj);
-
-        return eventRepository.findAll(spec, pageable).getContent();
     }
 
     private Boolean isValidSortProperty(String sort) {
