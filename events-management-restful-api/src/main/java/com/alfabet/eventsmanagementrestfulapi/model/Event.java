@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "events")
@@ -13,7 +15,7 @@ public class Event {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long event_id;
     //todo:: dont include in DTO
     @Column(updatable = false)
     private LocalDateTime createdAt;
@@ -23,8 +25,15 @@ public class Event {
     private LocalDateTime endTime;
     private String location;
     private String venue;
-    private int participants;
+    @ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH })
+    private Participant organizer;
 
+
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(name = "event_participants",
+            joinColumns = @JoinColumn(name = "event_id"),
+            inverseJoinColumns = @JoinColumn(name = "participant_email"))
+    private List<Participant> participants = new ArrayList<>();
     @PrePersist
     protected void onCreate() {
         createdAt = LocalDateTime.now(); // Set the creation time on entity creation

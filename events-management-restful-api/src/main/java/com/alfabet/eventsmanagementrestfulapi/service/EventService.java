@@ -1,7 +1,9 @@
 package com.alfabet.eventsmanagementrestfulapi.service;
 
 import com.alfabet.eventsmanagementrestfulapi.model.Event;
+import com.alfabet.eventsmanagementrestfulapi.model.Participant;
 import com.alfabet.eventsmanagementrestfulapi.repository.EventRepository;
+import com.alfabet.eventsmanagementrestfulapi.repository.ParticipantRepository;
 import com.alfabet.eventsmanagementrestfulapi.specification.EventSpecifications;
 import jakarta.transaction.Transactional;
 import org.springframework.data.domain.PageRequest;
@@ -11,19 +13,18 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class EventService {
 
     private final EventRepository eventRepository;
+    private final ParticipantRepository participantRepository;
 
     //@Autowired
-    public EventService(EventRepository eventRepository) {
+    public EventService(EventRepository eventRepository, ParticipantRepository participantRepository) {
         this.eventRepository = eventRepository;
+        this.participantRepository = participantRepository;
     }
 
     public Optional<Event> getEventById(Long id) {
@@ -31,9 +32,21 @@ public class EventService {
     }
 
     public Event createEvent(Event event) {
+        //Handle participants
+        List<Participant> updatedParticipants = new ArrayList<>();
+        for (Participant participant : event.getParticipants()) {
+            updatedParticipants.add(createParticipantIfDoesntExist(participant));
+        }
+        event.setParticipants(updatedParticipants); // Update the event with existing participants
+        //Handle organizer:
+        event.setOrganizer(createParticipantIfDoesntExist(event.getOrganizer()));
         return eventRepository.save(event);
     }
-
+    private Participant createParticipantIfDoesntExist(Participant participant){
+        Optional<Participant> existingParticipant = participantRepository.findById(participant.getEmail());
+        // Use the existing participant fetched from the database, if doesn't exist, create a new one
+        return existingParticipant.orElseGet(() -> participantRepository.save(participant));
+    }
     @Transactional
     public Event updateEvent(Long eventId, Event updatedEventData) {
         //todo: Convert to using DTO with MapStruct if time allows in order to prevent having to specify each property
@@ -69,9 +82,9 @@ public class EventService {
         if (updatedEventDetails.getVenue() != null) {
             existingEvent.setVenue(updatedEventDetails.getVenue());
         }
-//        if (updatedEventDetails.getParticipants() != null) {
-//            existingEvent.setParticipants(updatedEventDetails.getParticipants());
-//        }
+        if (updatedEventDetails.getParticipants() != null) {
+            existingEvent.setParticipants(updatedEventDetails.getParticipants());
+        }
         if (updatedEventDetails.getStartTime() != null) {
             existingEvent.setStartTime(updatedEventDetails.getStartTime());
         }
@@ -99,8 +112,8 @@ public class EventService {
             return eventRepository.findAll();
         }
 
-        if(sort.equals("popularity")){
-            sortObj = Sort.by(direction, "participants");
+        if (sort.equals("popularity")) {
+            sortObj = Sort.by(direction, "participants.size()");
         }
 
         pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sortObj);
