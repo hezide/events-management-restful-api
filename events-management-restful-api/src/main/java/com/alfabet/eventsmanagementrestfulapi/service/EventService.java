@@ -12,7 +12,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.*;
 
 @Service
@@ -100,10 +99,9 @@ public class EventService {
         eventRepository.deleteById(id);
     }
 
-    public List<Event> getEvents(String title, LocalDateTime startTime, LocalDateTime endTime,
-                                 String location, String venue,LocalDateTime createdAt, String sort, String order, Pageable pageable) {
+    public List<Event> getEvents(String locationFilter, String venueFilter, String sort, String order, Pageable pageable) {
         //Filtering
-        Specification<Event> spec = EventSpecifications.filterEvents(title, startTime, endTime, location, venue, createdAt);
+        Specification<Event> spec = EventSpecifications.filterEvents(locationFilter, venueFilter);
         //Sorting todo:: extract to a method
         Sort.Direction direction = Sort.Direction.fromString(order);
         Sort sortObj = null;

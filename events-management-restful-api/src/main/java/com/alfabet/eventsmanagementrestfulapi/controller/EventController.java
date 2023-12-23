@@ -8,7 +8,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -32,23 +31,9 @@ public class EventController {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-//    @GetMapping
-//    public ResponseEntity<List<Event>> getAllEvents(){
-//        List<Event> allEvents = eventService.getAllEvents();
-//        if (allEvents != null) {
-//            return new ResponseEntity<>(allEvents, HttpStatus.OK);
-//        } else {
-//            //todo: add more data to the error
-//            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-//        }
-//    }
 
     @GetMapping
     public ResponseEntity<List<Event>> getAllEvents(
-            @RequestParam(required = false) String title,
-            @RequestParam(required = false) LocalDateTime startTime,
-            @RequestParam(required = false) LocalDateTime endTime,
-            @RequestParam(required = false) LocalDateTime createdAt,
             @RequestParam(required = false) String location,
             @RequestParam(required = false) String venue,
             @RequestParam(required = false, defaultValue = "createdAt") String sort,
@@ -56,7 +41,7 @@ public class EventController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
         //todo:: add try catch
-        List<Event> events = eventService.getEvents(title, startTime, endTime, location, venue,createdAt, sort, order, PageRequest.of(page, size));
+        List<Event> events = eventService.getEvents(location, venue, sort, order, PageRequest.of(page, size));
         return ResponseEntity.ok(events);
     }
 

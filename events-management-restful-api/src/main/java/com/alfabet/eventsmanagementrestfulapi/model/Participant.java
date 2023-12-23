@@ -8,9 +8,6 @@ import lombok.Setter;
 @Table(name = "participants")
 @Getter @Setter
 public class Participant {
-//    @Id
-//    @GeneratedValue(strategy = GenerationType.IDENTITY)
-//    private Long participant_id;
     private String firstName;
     private String lastName;
     @Id
