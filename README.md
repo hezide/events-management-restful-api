@@ -56,3 +56,178 @@ To stop the application and remove the containers, use:
 
 `docker-compose down`
 
+# API Reference
+This API allows you to manage events by creating, retrieving, updating, and deleting them. Adjust the endpoints and request/response bodies as needed based on your application's requirements.
+
+### Create Event
+
+```http
+  POST /events
+```
+
+Creates a new event.
+
+#### Request Body
+
+| Field         | Type     | Description               |
+| :------------ | :------- | :------------------------ |
+| `event`       | `object` | **Required**. Event data  |
+
+### Example of event data
+```
+{
+    "title": "Training Workshop",
+    "startTime": "2024-01-05T10:00:00",
+    "endTime": "2024-01-05T16:00:00",
+    "location": "Tech Hub Auditorium",
+    "venue": null,
+    "organizer": {
+        "firstName": "Michael",
+        "lastName": "Brown",
+        "email": "michael@example.com"
+    },
+    "participants": [
+        {
+            "firstName": "Sarah",
+            "lastName": "Taylor",
+            "email": "sarah@example.com"
+        },
+        {
+            "firstName": "Oliver",
+            "lastName": "Davis",
+            "email": "oliver@example.com"
+        }
+    ]
+}
+```
+#### Response
+
+| Status Code | Description            |
+| :---------- | :--------------------- |
+| `201`       | Event created          |
+| `500`       | Internal Server Error  |
+
+### Get All Events
+
+```http
+  GET /events
+```
+
+Retrieves a list of all events.
+
+#### Query Parameters
+
+| Parameter    | Type     | Description                                     |
+| :----------- | :------- | :---------------------------------------------- |
+| `location`   | `string` | Filters events by location                      |
+| `venue`      | `string` | Filters events by venue                         |
+| `sort`       | `string` | Sorts events by a field (default: `createdAt`)  |
+| `order`      | `string` | Orders events (`asc` or `desc`, default: `asc`) |
+| `page`       | `integer`| Specifies the page number (default: `0`)        |
+| `size`       | `integer`| Specifies the page size (default: `10`)         |
+
+#### Response
+
+| Status Code | Description            |
+| :---------- | :--------------------- |
+| `200`       | List of events         |
+
+### Get Event by ID
+
+```http
+  GET /events/{id}
+```
+
+Retrieves an event by ID.
+
+#### Path Parameters
+
+| Parameter | Type     | Description               |
+| :-------- | :------- | :------------------------ |
+| `id`      | `string` | **Required**. Event ID    |
+
+#### Response
+
+| Status Code | Description            |
+| :---------- | :--------------------- |
+| `200`       | Event found            |
+| `404`       | Event not found        |
+| `500`       | Internal Server Error  |
+
+### Update Event
+
+```http
+  PUT /events/{id}
+```
+
+Updates an event by ID, the entire event properties will get updated even if they weren't provided.
+
+#### Path Parameters
+
+| Parameter | Type     | Description               |
+| :-------- | :------- | :------------------------ |
+| `id`      | `string` | **Required**. Event ID    |
+
+#### Request Body
+
+| Field              | Type     | Description                           |
+| :----------------- | :------- | :------------------------------------ |
+| `updatedEventDetails` | `object` | **Required**. Updated event data     |
+
+#### Response
+
+| Status Code | Description            |
+| :---------- | :--------------------- |
+| `200`       | Event updated          |
+| `404`       | Event not found        |
+| `500`       | Internal Server Error  |
+
+### Partially Update Event
+
+```http
+  PATCH /events/{id}
+```
+
+Partially updates an event by ID, will update only the properties that were provided.
+
+#### Path Parameters
+
+| Parameter | Type     | Description               |
+| :-------- | :------- | :------------------------ |
+| `id`      | `string` | **Required**. Event ID    |
+
+#### Request Body
+
+| Field              | Type     | Description                           |
+| :----------------- | :------- | :------------------------------------ |
+| `updatedEventDetails` | `object` | **Required**. Updated event data     |
+
+#### Response
+
+| Status Code | Description            |
+| :---------- | :--------------------- |
+| `200`       | Event updated          |
+| `404`       | Event not found        |
+| `500`       | Internal Server Error  |
+
+### Delete Event
+
+```http
+  DELETE /events/{id}
+```
+
+Deletes an event by ID.
+
+#### Path Parameters
+
+| Parameter | Type     | Description               |
+| :-------- | :------- | :------------------------ |
+| `id`      | `string` | **Required**. Event ID    |
+
+#### Response
+
+| Status Code | Description            |
+| :---------- | :--------------------- |
+| `200`       | Event deleted          |
+| `404`       | Event not found        |
+| `500`       | Internal Server Error  |
