@@ -4,7 +4,7 @@
 This repository contains a RESTful API for event management built using Spring Boot and PostgreSQL.
 ## Known issues and non-completed tasks:
 - Notification 30 minutes before the event is not implemented yet
-- Integration Testing
+- Integration Testing (partially)
 - Provide a DTO to replace the direct connection between the Event and Participants model and the API controller
 - Logging
 - Automatic documentation from the code
